@@ -1,0 +1,20 @@
+{
+  "manifest_version": 3,
+  "name": "댓글세탁소",
+  "version": "1.0.0",
+  "description": "AI 기반 유해 댓글 정화 시스템",
+  "permissions": ["storage"],
+  "action": {
+    "default_popup": "src/popup/popup.html"
+  },
+  "background": {
+    "service_worker": "assets/background.js",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://www.youtube.com/*"],
+      "js": ["assets/content.js"]
+    }
+  ]
+}
