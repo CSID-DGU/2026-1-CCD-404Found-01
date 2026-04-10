@@ -1,0 +1,16 @@
+# OS 관련 
+.DS_Store
+Thumbs.db
+
+# IDE 관련 
+.vscode/
+.idea/
+
+# 프론트엔드 
+node_modules/
+dist/
+.env
+*.log
+
+# 기타 공통
+.history/
