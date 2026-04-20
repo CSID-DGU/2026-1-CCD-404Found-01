@@ -1,0 +1,261 @@
+:root {
+  --primary-orange: #ff8a65;
+  --bg-beige: #fff5ee;
+  --card-bg: #ffffff;
+  --text-main: #4a4a4a;
+  --chart-color: #6d4c41;
+  --text-sub: #8e8e8e;
+}
+
+body {
+  width: 350px;
+  margin: 0;
+  padding: 0;
+  background-color: var(--bg-beige);
+  font-family:
+    "Pretendard",
+    -apple-system,
+    sans-serif;
+  overflow-x: hidden;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 15px;
+  box-sizing: border-box;
+}
+
+.toggle-shell {
+  background: #ffffff;
+  border-radius: 18px;
+  border: 1px solid #f0e1d8;
+  padding: 10px 12px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+}
+
+.mode-tabs {
+  position: relative;
+  display: flex;
+  width: 100%;
+  max-width: 270px;
+  background: rgba(255, 138, 101, 0.12);
+  border-radius: 999px;
+  border: 1px solid rgba(255, 138, 101, 0.18);
+  overflow: hidden;
+}
+
+.mode-tab {
+  flex: 1;
+  border: none;
+  background: transparent;
+  color: #9d8b7d;
+  font-size: 14px;
+  font-weight: 700;
+  padding: 12px 0 14px;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.mode-tab.active {
+  color: var(--chart-color);
+}
+
+#mode-clean.active ~ .mode-indicator {
+  left: 50%;
+}
+
+.mode-indicator {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 50%;
+  height: 4px;
+  background: var(--chart-color);
+  border-radius: 999px;
+  transition: left 0.25s ease;
+}
+
+.mode-tab:not(.active):hover {
+  color: var(--text-main);
+}
+
+.statistics-card {
+  background: var(--bg-beige);
+  border-radius: 18px;
+  padding: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 3px solid rgba(255, 255, 255, 0.9);
+}
+
+.stats-info h4 {
+  margin: 0 0 8px 0;
+  font-size: 14px;
+  color: var(--text-sub);
+}
+.stats-info p {
+  margin: 4px 0;
+  font-size: 12px;
+  font-weight: 500;
+}
+.highlight {
+  color: var(--primary-orange);
+  font-weight: bold;
+}
+
+.pie-chart {
+  position: relative;
+  width: 78px;
+  height: 78px;
+  border-radius: 50%;
+  background: conic-gradient(var(--primary-orange) 0deg 45deg, var(--chart-color) 45deg 360deg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #4a4a4a;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.pie-chart::before {
+  content: "";
+  position: absolute;
+  inset: 12px;
+  background: var(--card-bg);
+  border-radius: 50%;
+}
+
+.pie-chart span {
+  position: relative;
+  z-index: 1;
+}
+
+.filter-settings {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 0;
+}
+
+.filter-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 14px;
+  background: #ffffff;
+  border: 1px solid #ece6df;
+  border-radius: 14px;
+}
+
+.step-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #e0dbd6;
+  transition: 0.4s;
+  border-radius: 20px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: 0.4s;
+  border-radius: 50%;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+
+input:checked + .slider {
+  background-color: var(--primary-orange);
+}
+input:checked + .slider:before {
+  transform: translateX(20px);
+}
+
+/* 개인화 설정 영역 */
+.personal-settings {
+  background: var(--card-bg);
+  border-radius: 15px;
+  padding: 15px;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-bottom: 10px;
+}
+.section-header h4 {
+  margin: 0;
+  font-size: 14px;
+}
+
+.keyword-input-group {
+  display: flex;
+  gap: 5px;
+}
+
+#keyword-input {
+  flex: 1;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  padding: 8px;
+  font-size: 12px;
+  background: #f9f9f9;
+}
+
+#add-keyword {
+  background: var(--primary-orange);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 0 12px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.tag-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.tag {
+  background: #fff0eb;
+  color: var(--primary-orange);
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+}
