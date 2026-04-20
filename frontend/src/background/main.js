@@ -1,68 +1,66 @@
+import { performLogout, fetchIDToken } from "./auth.js";
+
+// 메시지 리스너
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  if (request.action === "login") {
-    console.log("시그널 감지: 팝업에서 로그인 요청이 들어왔습니다.");
-    getAuthToken();
-    sendResponse({ status: "로그인 프로세스 시작" });
+  // 로그인 요청이 들어오면 auth.js의 함수를 실행해 JWT를 가져옴
+  if (request.action === "login" || request.action === "forceLogin") {
+    fetchIDToken((jwt) => {
+      sendTokenToBackend(jwt); // 가져온 JWT를 서버로 전달
+    });
+    sendResponse({ status: "JWT 인증 프로세스 시작" });
   }
+
+  // 로그아웃 요청이 들어오면 세션을 끊고 성공 응답을 보냄
+  if (request.action === "requestLogout") {
+    performLogout(() => {
+      sendResponse({ status: "success" });
+    });
+    return true; // 비동기 응답을 위해 true 반환
+  }
+
   return true;
 });
 
-chrome.action.onClicked.addListener(() => {
-  console.log("아이콘 클릭 감지: 로그인을 시도합니다.");
-  getAuthToken();
-});
-
-function getAuthToken() {
-  chrome.identity.getAuthToken({ interactive: true }, (token) => {
-    if (chrome.runtime.lastError) {
-      console.error("토큰 발급 실패:", chrome.runtime.lastError.message);
-      return;
-    }
-
-    if (!token) {
-      console.error("토큰을 받지 못했습니다. 구글 콘솔 설정을 확인하세요.");
-      return;
-    }
-
-    console.log("획득한 액세스 토큰:", token);
-
-    sendTokenToBackend(token);
-  });
-}
-
-async function sendTokenToBackend(token) {
-  const TEST_URL = "https://404foundserver-h3cwawecfch5fbf2.koreacentral-01.azurewebsites.net/test/google-tokentest";
+// 백엔드 전송 로직
+async function sendTokenToBackend(jwt) {
+  const LOGIN_URL = "https://404foundserver-h3cwawecfch5fbf2.koreacentral-01.azurewebsites.net/test/google-tokentest";
+  const INFO_URL = "https://404foundserver-h3cwawecfch5fbf2.koreacentral-01.azurewebsites.net/test/test";
 
   try {
-    const response = await fetch(TEST_URL, {
+    console.log("1단계: 서버에 구글 JWT 전송 중");
+    const loginResponse = await fetch(LOGIN_URL, {
       method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        token: token,
-      }),
+      headers: { Authorization: `Bearer ${jwt}`, "Content-Type": "application/json" },
+      body: JSON.stringify({ token: jwt }),
     });
 
-    const text = await response.text();
-    let data;
-    try {
-      data = JSON.parse(text);
-    } catch (e) {
-      data = text;
-    }
+    // 서버 응답이 실패(400, 500번대 에러)라면 예외 처리
+    if (!loginResponse.ok) throw new Error(`로그인 서버 에러: ${loginResponse.status}`);
+    const loginData = await loginResponse.json();
+    console.log("1단계 성공: 서버 전용 토큰을 획득했습니다.");
 
-    if (!response.ok) {
-      throw new Error(`서버 에러: ${response.status} - ${data}`);
-    }
+    // 응답 데이터에서 토큰 꺼내기
+    const serverToken = loginData.token;
 
-    console.log("백엔드 통신 성공:", data);
+    console.log("2단계: 사용자 정보 조회를 시도합니다...");
+    const infoResponse = await fetch(INFO_URL, {
+      method: "GET",
+      headers: { Authorization: `Bearer ${serverToken}`, "Content-Type": "application/json" },
+    });
+
+    if (!infoResponse.ok) throw new Error(`정보 조회 에러: ${infoResponse.status}`);
+    // 사용자 상세 정보 파싱
+    const infoData = await infoResponse.json();
+
+    if (infoData.email) {
+      chrome.storage.local.set({ userEmail: infoData.email, isLoggedIn: true }, () => {
+        console.log("최종 성공! 서버로부터 받아온 데이터:", infoData.email);
+
+        chrome.runtime.sendMessage({ action: "loginFinished", email: infoData.email });
+      });
+    }
   } catch (error) {
-    console.error("백엔드 통신 실패:", error);
+    console.error("통신 흐름 실패:", error.message);
+    chrome.storage.local.set({ isLoggedIn: false, userEmail: "" });
   }
 }
-
-chrome.action.onClicked.addListener(() => {
-  getAuthToken();
-});
