@@ -1,3 +1,33 @@
+/* --- Fonts --- */
+@font-face {
+  font-family: "Pretendard";
+  src: url("/fonts/Pretendard-Regular.woff2") format("woff2");
+  font-weight: 400;
+}
+@font-face {
+  font-family: "Pretendard";
+  src: url("/fonts/Pretendard-SemiBold.woff2") format("woff2");
+  font-weight: 600;
+}
+@font-face {
+  font-family: "Pretendard";
+  src: url("/fonts/Pretendard-Bold.woff2") format("woff2");
+  font-weight: 700;
+}
+@font-face {
+  font-family: "GmarketSansMedium";
+  src: url("/fonts/GmarketSansMedium.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+}
+@font-face {
+  font-family: "GmarketSansLight";
+  src: url("/fonts/GmarketSansLight.woff2") format("woff2");
+  font-weight: 300;
+  font-style: normal;
+}
+
+/* --- Variables --- */
 :root {
   --primary-orange: #ff8a65;
   --bg-beige: #fff5ee;
@@ -5,45 +35,65 @@
   --text-main: #4a4a4a;
   --chart-color: #6d4c41;
   --text-sub: #8e8e8e;
+  --indicator: #8b6129;
 }
 
-body {
-  width: 350px;
+/* --- Base --- */
+* {
   margin: 0;
   padding: 0;
-  background-color: var(--bg-beige);
+  box-sizing: border-box;
   font-family:
     "Pretendard",
     -apple-system,
     sans-serif;
+}
+
+body {
+  width: 320px;
+  background-color: var(--bg-beige);
   overflow-x: hidden;
 }
 
 .container {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  padding: 15px;
-  box-sizing: border-box;
+  gap: 10px;
+  padding: 12px;
 }
 
+/* --- User Bar (로그인 정보) --- */
+.user-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px 2px 12px;
+}
+
+#user-email {
+  font-size: 10px;
+  color: var(--text-sub);
+  letter-spacing: -0.01em;
+}
+
+#btn-logout {
+  background: none;
+  border: none;
+  font-size: 10px;
+  color: var(--primary-orange);
+  cursor: pointer;
+  font-weight: 600;
+  padding: 2px 5px;
+}
+
+/* --- Top Toggle Navigation --- */
 .toggle-shell {
   background: #ffffff;
-  border-radius: 18px;
-  border: 1px solid #f0e1d8;
-  padding: 10px 12px;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
-}
-
-.mode-tabs {
+  width: 100%;
+  border-bottom: 1px solid rgba(255, 138, 101, 0.18);
   position: relative;
   display: flex;
-  width: 100%;
-  max-width: 270px;
-  background: rgba(255, 138, 101, 0.12);
-  border-radius: 999px;
-  border: 1px solid rgba(255, 138, 101, 0.18);
-  overflow: hidden;
+  padding: 0;
 }
 
 .mode-tab {
@@ -51,40 +101,57 @@ body {
   border: none;
   background: transparent;
   color: #9d8b7d;
-  font-size: 14px;
+  font-family: "GmarketSansLight", sans-serif;
+  font-size: 13px;
   font-weight: 700;
-  padding: 12px 0 14px;
+  padding: 15px 0 20px;
   cursor: pointer;
   transition: color 0.2s ease;
+  z-index: 5;
 }
 
 .mode-tab.active {
-  color: var(--chart-color);
+  color: var(--indicator);
+}
+
+/* --- Indicator --- */
+.mode-indicator {
+  position: absolute;
+  bottom: 10px;
+  left: 0;
+  width: 50%;
+  height: 2px;
+  background: var(--indicator);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 10;
+  transform: scaleX(0.45);
+  transform-origin: center;
+}
+
+/* 이동 로직 */
+#mode-general.active ~ .mode-indicator {
+  transform: translateX(0) scaleX(0.45);
 }
 
 #mode-clean.active ~ .mode-indicator {
-  left: 50%;
+  transform: translateX(100%) scaleX(0.45);
 }
 
-.mode-indicator {
+.mode-track {
   position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 50%;
-  height: 4px;
-  background: var(--chart-color);
-  border-radius: 999px;
-  transition: left 0.25s ease;
+  bottom: 11px;
+  left: 15%;
+  right: 15%;
+  height: 0.09rem;
+  background: #eee;
+  z-index: 1;
 }
 
-.mode-tab:not(.active):hover {
-  color: var(--text-main);
-}
-
+/* --- Statistics Card --- */
 .statistics-card {
   background: var(--bg-beige);
-  border-radius: 18px;
-  padding: 16px;
+  border-radius: 14px;
+  padding: 12px 14px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -92,13 +159,13 @@ body {
 }
 
 .stats-info h4 {
-  margin: 0 0 8px 0;
-  font-size: 14px;
+  margin-bottom: 4px;
+  font-size: 13px;
   color: var(--text-sub);
 }
 .stats-info p {
-  margin: 4px 0;
-  font-size: 12px;
+  margin: 2px 0;
+  font-size: 11px;
   font-weight: 500;
 }
 .highlight {
@@ -108,8 +175,8 @@ body {
 
 .pie-chart {
   position: relative;
-  width: 78px;
-  height: 78px;
+  width: 65px;
+  height: 65px;
   border-radius: 50%;
   background: conic-gradient(var(--primary-orange) 0deg 45deg, var(--chart-color) 45deg 360deg);
   display: flex;
@@ -117,13 +184,13 @@ body {
   justify-content: center;
   color: #4a4a4a;
   font-weight: 700;
-  font-size: 14px;
+  font-size: 12px;
 }
 
 .pie-chart::before {
   content: "";
   position: absolute;
-  inset: 12px;
+  inset: 10px;
   background: var(--card-bg);
   border-radius: 50%;
 }
@@ -133,34 +200,35 @@ body {
   z-index: 1;
 }
 
+/* --- Filter Settings --- */
 .filter-settings {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  padding: 0;
 }
 
 .filter-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 14px;
+  padding: 10px 12px;
   background: #ffffff;
   border: 1px solid #ece6df;
-  border-radius: 14px;
+  border-radius: 12px;
 }
 
 .step-label {
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 700;
   color: var(--text-main);
 }
 
+/* --- Switch UI --- */
 .switch {
   position: relative;
   display: inline-block;
-  width: 44px;
-  height: 24px;
+  width: 40px;
+  height: 22px;
 }
 
 .switch input {
@@ -184,39 +252,37 @@ body {
 .slider:before {
   position: absolute;
   content: "";
-  height: 18px;
-  width: 18px;
+  height: 16px;
+  width: 16px;
   left: 3px;
   bottom: 3px;
   background-color: white;
   transition: 0.4s;
   border-radius: 50%;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
 }
 
 input:checked + .slider {
   background-color: var(--primary-orange);
 }
 input:checked + .slider:before {
-  transform: translateX(20px);
+  transform: translateX(18px);
 }
 
-/* 개인화 설정 영역 */
+/* --- Personalization (Keywords) --- */
 .personal-settings {
   background: var(--card-bg);
-  border-radius: 15px;
-  padding: 15px;
+  border-radius: 14px;
+  padding: 12px;
 }
 
 .section-header {
   display: flex;
   align-items: center;
   gap: 5px;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
 .section-header h4 {
-  margin: 0;
-  font-size: 14px;
+  font-size: 13px;
 }
 
 .keyword-input-group {
@@ -228,8 +294,8 @@ input:checked + .slider:before {
   flex: 1;
   border: 1px solid #eee;
   border-radius: 8px;
-  padding: 8px;
-  font-size: 12px;
+  padding: 6px 8px;
+  font-size: 11px;
   background: #f9f9f9;
 }
 
@@ -238,8 +304,9 @@ input:checked + .slider:before {
   color: white;
   border: none;
   border-radius: 8px;
-  padding: 0 12px;
+  padding: 0 10px;
   cursor: pointer;
+  font-size: 11px;
   font-weight: bold;
 }
 
@@ -247,15 +314,26 @@ input:checked + .slider:before {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
-  margin-top: 10px;
+  margin-top: 8px;
 }
 
 .tag {
   background: #fff0eb;
   color: var(--primary-orange);
-  padding: 4px 8px;
+  padding: 3px 7px;
   border-radius: 6px;
-  font-size: 11px;
+  font-size: 10.5px;
   font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.tag button {
+  background: none;
+  border: none;
+  color: var(--primary-orange);
   cursor: pointer;
+  font-size: 10px;
+  padding: 0;
 }
