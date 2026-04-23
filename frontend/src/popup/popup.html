@@ -44,11 +44,11 @@
       <section class="statistics-card">
         <div class="stats-info">
           <h4>Statistics</h4>
-          <p>전체 댓글 : <span id="total-count">120</span></p>
-          <p>감지된 악플 : <span id="toxic-count" class="highlight">15</span> (12.5%)</p>
+          <p>전체 댓글 : <span id="total-count">0</span></p>
+          <p>감지된 악플 : <span id="toxic-count" class="highlight">0</span> (0%)</p>
         </div>
         <div class="stats-chart">
-          <div class="pie-chart"><span>15</span></div>
+          <div class="pie-chart" id="stats-pie-chart"><span>0</span></div>
         </div>
       </section>
 
@@ -60,10 +60,7 @@
           <input type="text" id="keyword-input" placeholder="차단할 단어 입력" />
           <button id="add-keyword">추가</button>
         </div>
-        <div id="keyword-tags" class="tag-container">
-          <span class="tag">주작 ✕</span>
-          <span class="tag">광고 ✕</span>
-        </div>
+        <div id="keyword-tags" class="tag-container"></div>
       </section>
     </div>
     <script type="module" src="popup.js"></script>

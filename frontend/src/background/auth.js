@@ -8,15 +8,15 @@ export function performLogout(callback) {
         fetch(`https://accounts.google.com/o/oauth2/revoke?token=${token}`);
       });
     }
-    chrome.storage.local.clear(() => {
-      console.log("로그아웃 완료 및 스토리지 초기화");
+    chrome.storage.local.remove(["isLoggedIn", "userEmail", "personalKeywords"], () => {
+      console.log("로그인 관련 정보만 삭제 완료");
       if (callback) callback();
     });
   });
 }
 
 // 구글 ID 토큰 획득 로직
-export function fetchIDToken(onSuccess) {
+export function fetchIDToken(onSuccess, onFailure) {
   const REDIRECT_URL = chrome.identity.getRedirectURL();
   const authUrl =
     `https://accounts.google.com/o/oauth2/v2/auth?` +
@@ -30,6 +30,7 @@ export function fetchIDToken(onSuccess) {
   chrome.identity.launchWebAuthFlow({ url: authUrl, interactive: true }, (redirectUrl) => {
     if (chrome.runtime.lastError || !redirectUrl) {
       console.error("인증 실패 또는 취소됨");
+      if (onFailure) onFailure();
       return;
     }
     // 인증 결과 URL에서 토큰 추출

@@ -4,21 +4,37 @@ import { performLogout, fetchIDToken } from "./auth.js";
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   // 로그인 요청이 들어오면 auth.js의 함수를 실행해 JWT를 가져옴
   if (request.action === "login" || request.action === "forceLogin") {
-    fetchIDToken((jwt) => {
-      sendTokenToBackend(jwt); // 가져온 JWT를 서버로 전달
-    });
-    sendResponse({ status: "JWT 인증 프로세스 시작" });
+    fetchIDToken(
+      (jwt) => {
+        // 1. 성공 시: 서버로 보냄
+        sendTokenToBackend(jwt);
+      },
+      () => {
+        // 2. 실패/취소 시: 팝업에게 로그인 이 취소되었다고 메시지를 보냄
+        chrome.runtime.sendMessage({ action: "loginCancelled" });
+      },
+    );
+    sendResponse({ status: "인증 프로세스 시작됨" });
   }
 
   // 로그아웃 요청이 들어오면 세션을 끊고 성공 응답을 보냄
   if (request.action === "requestLogout") {
     performLogout(() => {
-      sendResponse({ status: "success" });
+      // 브라우저 로컬 저장소의 로그인 관련 정보를 삭제/초기화
+      chrome.storage.local.set(
+        {
+          isLoggedIn: false,
+          userEmail: "",
+          personalKeywords: [],
+        },
+        () => {
+          console.log("로컬 데이터 초기화 완료");
+          sendResponse({ status: "success" });
+        },
+      );
     });
-    return true; // 비동기 응답을 위해 true 반환
+    return true;
   }
-
-  return true;
 });
 
 // 백엔드 전송 로직
