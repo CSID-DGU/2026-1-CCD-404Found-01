@@ -1,3 +1,6 @@
+import Toastify from "toastify-js";
+import "toastify-js/src/toastify.css";
+
 // 모드(일반/클린) 스타일 업데이트
 export function updateModeUI(isCleanMode) {
   const modeGeneralLabel = document.getElementById("mode-general");
@@ -32,4 +35,27 @@ export function updateStatisticsUI(total, toxic) {
   } else {
     pieChart.style.background = `conic-gradient(var(--primary-orange) 0deg ${percent * 3.6}deg, var(--chart-color) ${percent * 3.6}deg 360deg)`;
   }
+}
+
+// Toast 메시지
+export function showToast(message) {
+  Toastify({
+    text: message,
+    duration: 3000,
+    gravity: "top",
+    position: "center",
+    stopOnFocus: true,
+    style: {
+      background: "linear-gradient(to right, #ff5f6d, #ffc371)",
+      borderRadius: "10px",
+
+      width: "auto",
+      maxWidth: "70vw",
+      display: "inline-block",
+      whiteSpace: "nowrap",
+
+      textAlign: "center",
+      padding: "10px 20px",
+    },
+  }).showToast();
 }

@@ -1,4 +1,4 @@
-import { updateModeUI, updateStatisticsUI } from "./utils.js";
+import { updateModeUI, updateStatisticsUI, showToast } from "./utils.js";
 import { addTag, saveKeywords } from "./keywords.js";
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -81,11 +81,21 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
       const keyword = keywordInput.value.trim();
-      if (keyword) {
-        addTag(keyword, keywordTagsContainer);
+
+      if (!keyword) return; // 빈 칸이면 무시
+
+      // 기존 키워드 리스트에서 중복 확인
+      const currentKeywords = res.personalKeywords || [];
+      if (currentKeywords.includes(keyword)) {
+        showToast("이미 등록된 키워드입니다.");
         keywordInput.value = "";
-        saveKeywords(keywordTagsContainer);
+        return;
       }
+
+      // 중복이 아닐 때만 추가
+      addTag(keyword, keywordTagsContainer);
+      keywordInput.value = "";
+      saveKeywords(keywordTagsContainer);
     });
   };
 
@@ -99,7 +109,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!confirm("로그아웃 하시겠습니까?")) return;
     chrome.runtime.sendMessage({ action: "requestLogout" }, (response) => {
       if (response?.status === "success") {
-        alert("로그아웃 되었습니다.");
+        showToast("로그아웃 되었습니다.");
         window.location.reload();
       }
     });
@@ -127,7 +137,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // 메시지 리스너
   chrome.runtime.onMessage.addListener((msg) => {
-    if (msg.action === "loginCancelled") alert("로그인이 취소되었습니다.");
+    if (msg.action === "loginCancelled") showToast("로그인이 취소되었습니다.");
     if (msg.action === "loginFinished") window.location.reload();
   });
 });
