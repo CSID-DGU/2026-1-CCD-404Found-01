@@ -160,12 +160,23 @@
 
 ### 1. 프로젝트 클론
 
+Window
+
 ```bash
 git clone https://github.com/CSID-DGU/2026-1-CCD-404Found-01.git temp
 cp -r temp/frontend .
-rm -r -force temp
+ri -r -force temp
 cd frontend
 ```
+
+Mac
+```bash
+git clone https://github.com/CSID-DGU/2026-1-CCD-404Found-01.git temp
+cp -r temp/frontend .
+rm -rf temp
+cd frontend
+```
+
 
 ### 2. 빌드
 
@@ -183,7 +194,7 @@ docker run -it --rm -v .:/node -w /node node:24-alpine sh
 npm install
 npm run build
 exit
-docker rmi node:24-alpine
+docker rmi node:24-alpine #(node:24-alpine 이미지가 불필요한 경)
 ```
 
 빌드 완료 시 `/frontend/dist` 폴더가 생성됩니다.
